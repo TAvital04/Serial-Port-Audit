@@ -7,7 +7,7 @@
 // Functions
 void most_recent_windows_error();
 
-int connect_to_port(HANDLE *serial_port);
+int connect_to_port(HANDLE *serial_port, char *serial_port_label);
 int configure_port_dcb(const HANDLE serial_port);
 int configure_port_timeouts(const HANDLE serial_port);
 int clear_buffers(const HANDLE serial_port);
@@ -21,7 +21,8 @@ int main() {
     HANDLE serial_port = NULL;
 
     // Connect to the port
-    status = connect_to_port(&serial_port);
+    char *serial_port_label = "\\\\.\\COM##";                      // CHANGE THIS
+    status = connect_to_port(&serial_port, serial_port_label);
     if(status == 0) {
         printf("Successfully connected to the serial port.\n");
     } else {
@@ -106,10 +107,10 @@ void most_recent_windows_error() {
     fprintf(stderr, "WINDOWS ERROR: %s", error_message);
 }
 
-int connect_to_port(HANDLE *serial_port) {
+int connect_to_port(HANDLE *serial_port, char *serial_port_label) {
     // Establish a connection with the serial port
     *serial_port = CreateFileA(
-        "\\\\.\\COM3",
+        serial_port_label,
         GENERIC_READ | GENERIC_WRITE,
         0,
         NULL,
